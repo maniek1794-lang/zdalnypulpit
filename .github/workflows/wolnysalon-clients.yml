@@ -1,0 +1,35 @@
+name: Wolny Salon remote support clients
+
+on:
+  push:
+    tags:
+      - wolnysalon-v*
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Platform to build and inspect before publication
+        type: choice
+        required: true
+        options:
+          - windows
+          - macos
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    if: ${{ github.event_name == 'push' || inputs.platform == 'windows' }}
+    uses: ./.github/workflows/flutter-build.yml
+    with:
+      client-target: windows
+      upload-artifact: true
+      upload-tag: wolnysalon-1.5.0-${{ github.run_number }}
+
+  build-macos:
+    if: ${{ github.event_name == 'push' || inputs.platform == 'macos' }}
+    uses: ./.github/workflows/flutter-build.yml
+    with:
+      client-target: macos
+      upload-artifact: true
+      upload-tag: wolnysalon-1.5.0-${{ github.run_number }}
